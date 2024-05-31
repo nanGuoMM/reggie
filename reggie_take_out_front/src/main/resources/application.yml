@@ -21,9 +21,9 @@ spring:
     # 端口号
     port: 587
     # 发送邮箱地址，邮箱号
-    username: zhuyuqinss@qq.com
+    username: ${mailUsername}
     # 授权码
-    password: wwmreuijtqrldgeb
+    password: ${mailpassword}
     properties:
       mail:
           ssl:
