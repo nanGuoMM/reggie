@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <title>菩提阁</title>
+    <link rel="icon" href="./../images/favico.ico">
+    <!--不同屏幕尺寸根字体设置-->
+    <script src="./../js/base.js"></script>
+    <!--element-ui的样式-->
+    <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css"/>
+    <!--引入vant样式-->
+    <link rel="stylesheet" href="../styles/vant.min.css"/>
+    <!-- 引入样式  -->
+    <link rel="stylesheet" href="../styles/index.css"/>
+    <!--本页面内容的样式-->
+    <link rel="stylesheet" href="./../styles/register.css"/>
+    <style>
+        .disabled {
+            color: grey;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+<div id="register" v-loading="loading">
+    <div class="divHead">注册</div>
+    <div class="divContainer">
+        <el-input placeholder="请输入邮箱" v-model="form.mail" maxlength="50"></el-input>
+        <div class="divSplit"></div>
+        <div class="codeInputContainer">
+            <el-input placeholder="请输入验证码" v-model="form.code" maxlength="20"></el-input>
+            <span :class="{disabled: countdown > 0}" @click='getCode'>{{ countdown > 0 ? `${countdown}s后重试` : '获取验证码' }}</span>
+        </div>
+        <div class="divSplit"></div>
+        <el-input type="password" placeholder="请输入密码" v-model="form.password" maxlength="50"></el-input>
+    </div>
+    <div class="btnContainer">
+        <el-button type="primary" :class="{btnSubmit: true, btnNoPhone: !form.mail, btnPhone: form.mail}" @click="btnLogin">
+            注册
+        </el-button>
+    </div>
+</div>
+
+<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+<script src="../../backend/plugins/vue/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="../../backend/plugins/element-ui/index.js"></script>
+<!-- 引入vant样式 -->
+<script src="./../js/vant.min.js"></script>
+<!-- 引入axios -->
+<script src="../../backend/plugins/axios/axios.min.js"></script>
+<script src="./../js/request.js"></script>
+<script src="./../api/register.js"></script>
+<script>
+    new Vue({
+        el: "#register",
+        data() {
+            return {
+                form: {
+                    mail: '',
+                    password: '',
+                    code: ''
+                },
+                loading: false,
+                countdown: 0, // 倒计时时间
+                timer: null // 定时器
+            }
+        },
+        methods: {
+            async getCode() {
+                //检验邮箱
+                const regex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                if (!regex.test(this.form.mail)) {
+                    this.$notify({ type: 'warning', message: '请正确输入邮箱！' });
+                    return;
+                }
+
+                if (this.countdown > 0) {
+                    return; // 如果倒计时未结束，则直接返回
+                }
+
+                // 调用后端发送验证码的接口
+                try {
+                    const response = await getCodApi({mail: this.form.mail});
+                    if (response.code === 1) {
+                        this.startCountdown();
+                        this.$notify({ type: 'success', message: '验证码已发送' });
+                    } else {
+                        this.$notify({ type: 'warning', message: response.msg });
+                    }
+                } catch (error) {
+                    this.$notify({ type: 'warning', message: '发送验证码出错' });
+                }
+            },
+            startCountdown() {
+                this.countdown = 60;
+                this.timer = setInterval(() => {
+                    if (this.countdown > 0) {
+                        this.countdown--;
+                    } else {
+                        clearInterval(this.timer);
+                    }
+                }, 1000);
+            },
+            async btnLogin() {
+                const regex = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                if (!regex.test(this.form.mail)) {
+                    this.$notify({ type: 'warning', message: '请正确输入邮箱！' });
+                    return;
+                }
+                const  regex1 = /^.{6,}$/;
+                if (!regex1.test(this.form.password)) {
+                    this.$notify({ type: 'warning', message: '密码最少6位' });
+                    return;
+                }
+
+                const regex2 = /^\d{4}$/;
+                if(!regex2.test(this.form.code)) {
+                    this.$notify({ type: 'warning', message: '验证码为4位' });
+                    return;
+                }
+                    this.loading = true;
+                    try {
+                        const res = await registerApi({ mail: this.form.mail, password: this.form.password, code: this.form.code });
+                        this.loading = false;
+                        if (res.code === 1) {
+                            window.requestAnimationFrame(() => {
+                                window.location.href = '/front/page/login.html';
+                            });
+                        } else {
+                            this.$notify({ type: 'warning', message: res.msg });
+                        }
+                    } catch (e) {
+                        this.loading = false;
+                    }
+            }
+        }
+    });
+</script>
+</body>
+</html>
