@@ -37,5 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### nanGuoMM个人配置  ###
-*.properties
+reggie_take_out_front/src/main/resources/properties_nanGuoMM/
