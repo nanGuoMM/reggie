@@ -24,4 +24,4 @@ mybatis-plus:
       id-type: ASSIGN_ID
 
 # 文件上传本地路径
-basePath: E:\javaWeb\workspace\image\
+basePath: ../image/
