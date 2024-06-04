@@ -7,7 +7,7 @@ import com.nanGuoMM.reggie.front.domain.user.DTO.UserRegisterDTO;
 import com.nanGuoMM.reggie.front.domain.user.PO.UserPO;
 import com.nanGuoMM.reggie.front.domain.user.VO.UserVO;
 import com.nanGuoMM.reggie.front.service.IUserService;
-import com.nanGuoMM.reggie.front.utils.EmailUtils;
+import com.nanGuoMM.reggie.front.utils.MailUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class UserController {
     private IUserService userService;
 
     @Autowired
-    private EmailUtils emailUtils;
+    private MailUtil mailUtil;
 
     @ApiOperation("登录")
     @PostMapping("/login")
@@ -79,7 +79,7 @@ public class UserController {
         }
         String code = sb.toString();
         //发送验证码
-        emailUtils.sendSimpleMessage(mail, "瑞吉外卖", "这是瑞吉外卖的注册码:" + code +
+        mailUtil.sendMail(mail, "瑞吉外卖", "这是瑞吉外卖的注册码:" + code +
                 "------请勿随意交给他人！！！");
         //生成验证码放入session
         log.info("验证码:{}", code);
