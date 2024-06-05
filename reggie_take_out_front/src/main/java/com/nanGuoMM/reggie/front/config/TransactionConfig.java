@@ -1,4 +1,4 @@
-package com.nanGuoMM.reggie.backend.config;
+package com.nanGuoMM.reggie.front.config;
 
 
 import org.springframework.context.annotation.Configuration;

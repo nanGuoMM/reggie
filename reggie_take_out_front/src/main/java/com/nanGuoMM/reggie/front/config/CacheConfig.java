@@ -12,6 +12,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+/**
+ * Redis缓存管理器
+ */
 @Configuration
 @EnableCaching
 public class CacheConfig {
@@ -19,7 +22,7 @@ public class CacheConfig {
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(1))  // 设置缓存的有效期为1小时
+                .entryTtl(Duration.ofHours(12))  // 设置缓存的有效期为1小时
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))  // 配置key的序列化方式
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));  // 配置value的序列化方式
 
@@ -28,5 +31,6 @@ public class CacheConfig {
                 .build();
     }
 }
+
 
 

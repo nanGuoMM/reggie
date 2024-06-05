@@ -13,11 +13,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -37,6 +40,9 @@ public class UserController {
 
     @Autowired
     private MailUtil mailUtil;
+
+    @Resource
+    private RedisTemplate<String,String> redisTemplate;
 
     @ApiOperation("登录")
     @PostMapping("/login")
@@ -62,7 +68,7 @@ public class UserController {
 
     @ApiOperation("发送验证码")
     @GetMapping("/code")
-    public Result<Object> code(HttpServletRequest request, @RequestParam String mail) {
+    public Result<Object> code( @RequestParam String mail) {
         //检查邮箱是否已注册
         LambdaQueryWrapper<UserPO> queryWrapper = new LambdaQueryWrapper<UserPO>()
                 .eq(UserPO::getMail,mail);
@@ -83,7 +89,8 @@ public class UserController {
                 "------请勿随意交给他人！！！");
         //生成验证码放入session
         log.info("验证码:{}", code);
-        request.getSession().setAttribute("code", code);
+        //存入Redis，有效时间三分钟
+        redisTemplate.opsForValue().set(mail,code,3, TimeUnit.MINUTES);
         return Result.success();
     }
 
@@ -91,13 +98,16 @@ public class UserController {
     @PostMapping("/register")
     public Result<Object> register(HttpServletRequest request, @RequestBody UserRegisterDTO registerDTO) {
         //获取验证码
-        String code = (String) request.getSession().getAttribute("code");
+        String code = redisTemplate.opsForValue().get(registerDTO.getMail());
         if (code == null) {
             return Result.error("请获取验证码");
         }
         if (!code.equals(registerDTO.getCode())) {
             return Result.error("验证码错误");
         }
+
+        //验证通过删除本地缓存的验证码
+        redisTemplate.delete(registerDTO.getMail());
 
         //对密码进行md5加密
         registerDTO.setPassword(DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes()));
