@@ -35,7 +35,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         Page<Orders> ordersIPage = new Page<>(page,pageSize);
         LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.between(beginTime != null&&endTime != null,Orders::getOrderTime,beginTime,endTime)
-                .eq(number != null,Orders::getNumber,number);
+                .eq(number != null,Orders::getNumber,number).orderByDesc(Orders::getOrderTime);
         super.page(ordersIPage,queryWrapper);
         //查询orderDetail表，并封装List<OrdersDTO>
         List<OrdersDTO> ordersDTOList = ordersIPage.getRecords().stream().map(orders -> {

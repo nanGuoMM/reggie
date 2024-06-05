@@ -1,6 +1,11 @@
 # reggie
 瑞吉外卖
 
+## 项目数据库图片
+
+链接: https://pan.baidu.com/s/1TOr_eg-e4bJyPPHXmFoERQ?pwd=nmx6 提取码: nmx6 复制这段内容后打开百度网盘手机App，操作更方便哦 
+--来自百度网盘超级会员v6的分享
+
 
 ## 数据库SQL
 /*

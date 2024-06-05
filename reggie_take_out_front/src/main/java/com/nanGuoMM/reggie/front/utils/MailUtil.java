@@ -7,13 +7,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:properties_nanGuoMM/mail.properties")
 public class MailUtil {
 
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${mailUsername}")
+    @Value("${SMTP_USER}")
     private String mailUsername;
 
     public void sendMail(String to, String subject, String text) {

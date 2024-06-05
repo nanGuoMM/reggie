@@ -26,7 +26,6 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/order")
 @Api(tags = "订单")
-@Slf4j
 public class OrdersController {
 
     @Autowired
