@@ -42,7 +42,7 @@ public class OrdersController {
     @ApiOperation("状态")
     @PutMapping
     public Result<Object> updateStatus(@RequestBody Orders orders) {
-        ordersService.updateById(orders);
+        ordersService.updateStatus(orders);
         return Result.success();
     }
 }

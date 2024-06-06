@@ -35,11 +35,7 @@ public class CategoryController {
     @PostMapping
     public Result<Object> save(@RequestBody CategoryDTO categorySaveFormDTO) {
 
-        //封装CategoryPo对象，调用service
-        CategoryPO categoryPO = new CategoryPO();
-        BeanUtils.copyProperties(categorySaveFormDTO,categoryPO);
-
-        categoryService.save(categoryPO);
+        categoryService.saveCagory(categorySaveFormDTO);
         return Result.success();
     }
 
@@ -64,28 +60,14 @@ public class CategoryController {
     @ApiOperation(value = "修改",notes = "修改分类")
     @PutMapping
     public Result<Object> updateCategory(@RequestBody CategoryDTO categoryDTO) {
-        //封装PO
-        CategoryPO categoryPO = new CategoryPO();
-        BeanUtils.copyProperties(categoryDTO,categoryPO);
-        //调用service
-        categoryService.updateById(categoryPO);
+        categoryService.updateCategory(categoryDTO);
         return Result.success();
     }
 
     @ApiOperation(value = "查询",notes = "展示分类下拉列表")
     @GetMapping("/list")
     public Result<List<CategoryDTO>> listCategory(Integer type) {
-        //查询
-        LambdaQueryWrapper<CategoryPO> queryWrapper = new LambdaQueryWrapper<CategoryPO>()
-                .eq(type != null,CategoryPO::getType,type).orderByAsc(CategoryPO::getSort).orderByDesc(CategoryPO::getUpdateTime);
-        List<CategoryPO> listPO = categoryService.list(queryWrapper);
-        //封装dto数据
-        List<CategoryDTO> listDTO = new ArrayList<>();
-        listPO.forEach(categoryPO -> {
-            CategoryDTO categoryDTO = new CategoryDTO();
-            BeanUtils.copyProperties(categoryPO,categoryDTO);
-            listDTO.add(categoryDTO);
-        });
+        List<CategoryDTO> listDTO = categoryService.listCategory(type);
         return Result.success(listDTO);
     }
 }

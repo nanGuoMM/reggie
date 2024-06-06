@@ -16,13 +16,12 @@ public class EmployeeLoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Long empId = (Long) request.getSession().getAttribute("employee");
         if ( empId != null) {
-            log.info("员工已登录，拦截器放行-----------------");
             //给当前Servlet线程设置值
             BaseContext.setCurrentId(empId);
             return true;
         }
 
-        log.info("员工未登录，拦截-------------------");
+        log.info("host:" + request.getRemoteAddr() + "-----未登录，拦截-------------------");
         response.getWriter().write(JSON.toJSONString(Result.error("NOTLOGIN")));
         return false;
     }

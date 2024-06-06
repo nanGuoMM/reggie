@@ -1,7 +1,6 @@
 package com.nanGuoMM.reggie.front.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,15 +14,14 @@ import com.nanGuoMM.reggie.front.exception.CustomException;
 import com.nanGuoMM.reggie.front.mapper.OrdersMapper;
 import com.nanGuoMM.reggie.front.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.nanGuoMM.reggie.front.utils.BaseContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -50,10 +48,10 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     @Autowired
     private IOrderDetailService orderDetailService;
+
+    @CacheEvict(cacheNames = "orderCache",key = "'page_1_size_10' + '_' +#userId")
     @Override
-    public void submit(Orders orders) {
-        //获取用户id
-        Long userId = BaseContext.getCurrentId();
+    public void submit(Orders orders, Long userId) {
         //查找下单地址
         Long addressBookId = orders.getAddressBookId();
         AddressBookPO addressBook = addressBookService.getById(addressBookId);
@@ -112,11 +110,12 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         shoppingCartService.remove(queryWrapper);
     }
 
+    @Cacheable(cacheNames = "orderCache",key = "'page_1_size_10' + '_' +#userId")
     @Override
-    public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize) {
+    public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, Long userId) {
         //分页查询order表
         LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Orders::getUserId,BaseContext.getCurrentId());
+        queryWrapper.eq(Orders::getUserId,userId);
         Page<Orders> ordersIPage = new Page<>(page,pageSize);
         super.page(ordersIPage,queryWrapper);
         //查询orderDetail表，并封装List<OrdersDTO>

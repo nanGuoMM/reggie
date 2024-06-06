@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface IOrdersService extends IService<Orders> {
 
-    void submit(Orders orders);
+    void submit(Orders orders, Long userId);
 
-    IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize);
+    IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, Long userId);
 }

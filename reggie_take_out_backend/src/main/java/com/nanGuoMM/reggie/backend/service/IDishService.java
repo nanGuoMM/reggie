@@ -27,4 +27,6 @@ public interface IDishService extends IService<DishPO> {
     void updateDish(DishDTO dishDTO);
 
     void deleteDish(List<Long> ids);
+
+    void updateStatus(Integer status, List<Long> ids);
 }

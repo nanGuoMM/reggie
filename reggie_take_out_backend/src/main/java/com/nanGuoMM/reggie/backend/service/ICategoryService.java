@@ -6,6 +6,8 @@ import com.nanGuoMM.reggie.backend.domain.category.PO.CategoryPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * <p>
  * 菜品及套餐分类 服务类
@@ -18,4 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ICategoryService extends IService<CategoryPO> {
     IPage<CategoryDTO> pageCategory(Integer page, Integer pageSize);
     void removeCategory(Long id);
+
+    void saveCagory(CategoryDTO categorySaveFormDTO);
+
+    void updateCategory(CategoryDTO categoryDTO);
+
+    List<CategoryDTO> listCategory(Integer type);
 }

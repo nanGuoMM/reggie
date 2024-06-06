@@ -12,6 +12,8 @@ import com.nanGuoMM.reggie.backend.service.IOrdersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrdersService {
     @Autowired
     private IOrderDetailService orderDetailService;
+    @Cacheable(cacheNames = "orderCache", key = "'page_1_size_10' + '_all'")
     @Override
     public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, LocalDateTime beginTime, LocalDateTime endTime, Long number) {
         Page<Orders> ordersIPage = new Page<>(page,pageSize);
@@ -52,5 +55,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         IPage<OrdersDTO> ordersDTOIPage = new Page<>(page,pageSize,ordersIPage.getTotal());
         ordersDTOIPage.setRecords(ordersDTOList);
         return ordersDTOIPage;
+    }
+
+    @CacheEvict(cacheNames = "orderCache", allEntries = true)
+    @Override
+    public void updateStatus(Orders orders) {
+        super.updateById(orders);
     }
 }

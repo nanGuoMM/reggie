@@ -1,4 +1,4 @@
-package com.nanGuoMM.reggie.front.config;
+package com.nanGuoMM.reggie.backend.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -6,6 +6,7 @@ import com.nanGuoMM.reggie.front.domain.orders.Orders;
 import com.nanGuoMM.reggie.front.domain.orders.OrdersDTO;
 import com.nanGuoMM.reggie.front.service.IOrderDetailService;
 import com.nanGuoMM.reggie.front.service.IOrdersService;
+import com.nanGuoMM.reggie.front.utils.BaseContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,18 @@ public class OrdersController {
     @ApiOperation("用户下单")
     @PostMapping("/submit")
     public Result<Object> submit(@RequestBody Orders orders) {
-        ordersService.submit(orders);
+        //获取用户id
+        Long userId = BaseContext.getCurrentId();
+        ordersService.submit(orders,userId);
         return Result.success();
     }
 
     @ApiOperation("查询")
     @GetMapping("/userPage")
     public Result<IPage<OrdersDTO>> pageOrder(Integer page,Integer pageSize) {
-        IPage<OrdersDTO> ordersDTOIPage = ordersService.pageOrder(page,pageSize);
+        //获取当前用户数据
+        Long userId = BaseContext.getCurrentId();
+        IPage<OrdersDTO> ordersDTOIPage = ordersService.pageOrder(page,pageSize,userId);
         return Result.success(ordersDTOIPage);
     }
 }

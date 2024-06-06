@@ -16,5 +16,7 @@ import java.util.List;
  * @author nanGuoMM
  * @since 2024-05-23
  */
+@Transactional
 public interface IDishService extends IService<DishPO> {
+    List<DishDTO> listDish(long categoryId,Integer status);
 }

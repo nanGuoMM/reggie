@@ -11,9 +11,9 @@ spring:
       password: ${DB_PASSWORD}
   #redis配置
   redis:
-    host: localhost
+    host: 116.198.43.90
     port: 6379
-    password:
+    password: ${DB_PASSWORD}
     lettuce:
       pool:
         max-active: 8 # 连接池最大连接数

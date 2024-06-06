@@ -75,10 +75,7 @@ public class DishController {
     @ApiOperation(value = "状态",notes = "停售起售")
     @PostMapping("/status/{status}")
     public Result<Object> updateStatus(@PathVariable Integer status,@RequestParam List<Long> ids) {
-        //按ids修改状态
-        LambdaUpdateWrapper<DishPO> updateWrapper = new LambdaUpdateWrapper<DishPO>()
-                .in(DishPO::getId,ids).set(DishPO::getStatus,status);
-        dishService.update(updateWrapper);
+        dishService.updateStatus(status,ids);
         return Result.success();
     }
 

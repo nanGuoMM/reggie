@@ -35,17 +35,8 @@ public class SetmealController {
     @ApiOperation("查询")
     @GetMapping("/list")
     public Result<List<SetmealDTO>> listSetmeal(SetmealDTO setmealDTO) {
-        //查询
-        LambdaQueryWrapper<SetmealPO> queryWrapper = new LambdaQueryWrapper<SetmealPO>()
-                .eq(SetmealPO::getId,setmealDTO.getId()).eq(SetmealPO::getStatus,setmealDTO.getStatus())
-                .orderByDesc(SetmealPO::getUpdateTime);
-        List<SetmealPO> setmealPOS = setmealService.list(queryWrapper);
 
-        List<SetmealDTO> setmealDTOS = setmealPOS.stream().map(setmealPO -> {
-            SetmealDTO setmealDTO1 = new SetmealDTO();
-            BeanUtils.copyProperties(setmealPO, setmealDTO1);
-            return setmealDTO1;
-        }).collect(Collectors.toList());
+        List<SetmealDTO> setmealDTOS =setmealService.listSetmeal(setmealDTO);
 
         return Result.success(setmealDTOS);
     }

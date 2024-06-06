@@ -1,6 +1,7 @@
 package com.nanGuoMM.reggie.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nanGuoMM.reggie.backend.domain.category.PO.CategoryPO;
@@ -15,6 +16,8 @@ import com.nanGuoMM.reggie.backend.service.IDishService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +41,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
     @Autowired
     private ICategoryService categoryService;
 
+    @Cacheable(cacheNames = "dishCache",key = "'page_1_size_10'")
     @Override
     public IPage<DishDTO> pageDish(String page, String pageSize,String name) {
         //查询
@@ -66,6 +70,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
         return dishDTOPage;
     }
 
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     @Override
     public void saveDish(DishDTO dishDto) {
 
@@ -109,6 +114,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
         return dishDTO;
     }
 
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     @Override
     public void updateDish(DishDTO dishDTO) {
         //获取口味dto列表
@@ -126,6 +132,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
         super.updateById(dishPO);
     }
 
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
     @Override
     public void deleteDish(List<Long> ids) {
         //按ids删除口味
@@ -135,5 +142,14 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
 
         //按ids删除菜品
         super.removeByIds(ids);
+    }
+
+    @CacheEvict(cacheNames = "dishCache",allEntries = true)
+    @Override
+    public void updateStatus(Integer status, List<Long> ids) {
+        //按ids修改状态
+        LambdaUpdateWrapper<DishPO> updateWrapper = new LambdaUpdateWrapper<DishPO>()
+                .in(DishPO::getId,ids).set(DishPO::getStatus,status);
+        super.update(updateWrapper);
     }
 }

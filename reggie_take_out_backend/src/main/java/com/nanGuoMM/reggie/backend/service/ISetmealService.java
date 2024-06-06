@@ -28,4 +28,6 @@ public interface ISetmealService extends IService<SetmealPO> {
     void updateSetmeal(SetmealDTO setmealDTO);
 
     void deleteSetmeal(List<Long> ids);
+
+    void updateStatus(Integer status, List<Long> ids);
 }

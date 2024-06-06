@@ -1,6 +1,7 @@
 package com.nanGuoMM.reggie.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nanGuoMM.reggie.backend.domain.category.PO.CategoryPO;
@@ -15,6 +16,8 @@ import com.nanGuoMM.reggie.backend.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +41,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
     @Autowired
     private ISetmealDishService setmealDishService;
 
+    @Cacheable(cacheNames = "setmealCache",key = "'page_1_size_10'")
     @Override
     public IPage<SetmealDTO> pageSetmeal(int page, int pageSize, String name) {
         //分页查询
@@ -63,6 +67,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         return setmealDTOIPage;
     }
 
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     @Override
     public void saveSetmeal(SetmealDTO setmealDTO) {
         //转换，并保存套餐
@@ -100,6 +105,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         return setmealDTO;
     }
 
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     @Override
     public void updateSetmeal(SetmealDTO setmealDTO) {
         //更新套餐信息
@@ -115,6 +121,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         });
     }
 
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     @Override
     public void deleteSetmeal(List<Long> ids) {
         //删除菜品和套餐关系
@@ -123,5 +130,14 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         setmealDishService.remove(queryWrapper);
         //删除套餐
         super.removeByIds(ids);
+    }
+
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
+    @Override
+    public void updateStatus(Integer status, List<Long> ids) {
+        //修改状态
+        LambdaUpdateWrapper<SetmealPO> updateWrapper = new LambdaUpdateWrapper<SetmealPO>()
+                .in(SetmealPO::getId,ids).set(SetmealPO::getStatus,status);
+        super.update(updateWrapper);
     }
 }

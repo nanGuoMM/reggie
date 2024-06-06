@@ -75,10 +75,7 @@ public class SetmealController {
     @ApiOperation(value = "状态",notes = "启售禁售")
     @PostMapping("/status/{status}")
     public Result<Object> updateStatus(@PathVariable Integer status,@RequestParam List<Long> ids) {
-        //修改状态
-        LambdaUpdateWrapper<SetmealPO> updateWrapper = new LambdaUpdateWrapper<SetmealPO>()
-                .in(SetmealPO::getId,ids).set(SetmealPO::getStatus,status);
-        setmealService.update(updateWrapper);
+        setmealService.updateStatus(status,ids);
         return Result.success();
     }
 }

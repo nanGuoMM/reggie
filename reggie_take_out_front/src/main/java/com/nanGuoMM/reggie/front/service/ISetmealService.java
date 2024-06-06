@@ -1,7 +1,10 @@
 package com.nanGuoMM.reggie.front.service;
 
+import com.nanGuoMM.reggie.front.domain.setmeal.DTO.SetmealDTO;
 import com.nanGuoMM.reggie.front.domain.setmeal.PO.SetmealPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISetmealService extends IService<SetmealPO> {
 
+    List<SetmealDTO> listSetmeal(SetmealDTO setmealDTO);
 }

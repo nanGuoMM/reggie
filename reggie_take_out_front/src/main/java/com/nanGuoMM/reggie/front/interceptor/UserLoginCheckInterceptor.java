@@ -17,13 +17,12 @@ public class UserLoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Long userId = (Long) request.getSession().getAttribute("user");
         if ( userId != null) {
-            log.info("用户已登录，拦截器放行-----------------");
             //给当前用户Servlet线程设置值
             BaseContext.setCurrentId(userId);
             return true;
         }
 
-        log.info("用户未登录，拦截-------------------");
+        log.info("host:" + request.getRemoteAddr() + "-----未登录，拦截-------------------");
         response.getWriter().write(JSON.toJSONString(Result.error("NOTLOGIN")));
         return false;
     }

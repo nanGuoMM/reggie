@@ -20,4 +20,6 @@ import java.time.LocalDateTime;
 public interface IOrdersService extends IService<Orders> {
 
     IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, LocalDateTime beginTime, LocalDateTime endTime, Long number);
+
+    void updateStatus(Orders orders);
 }
