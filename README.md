@@ -5,3 +5,7 @@ B站项目实站项目个人演示项目，实现了课程中项目该有的全�
 ## 项目数据库图片
 
 https://wwk.lanzouq.com/iOq8o218tckd
+
+## 课程地址
+
+https://www.bilibili.com/video/BV13a411q753/?spm_id_from=333.788.video.desc.click
