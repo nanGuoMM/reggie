@@ -49,7 +49,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     @Autowired
     private IOrderDetailService orderDetailService;
 
-    @CacheEvict(cacheNames = "orderCache",key = "'page_1_size_10' + '_' +#userId")
+    @CacheEvict(cacheNames = "orderCache",allEntries = true)
     @Override
     public void submit(Orders orders, Long userId) {
         //查找下单地址
