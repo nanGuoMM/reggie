@@ -31,9 +31,9 @@ public class SwaggerConfig {
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("reggie_take_out--api文档") //  可以用来自定义API的主标题
-                .description("瑞吉外卖") // 可以用来描述整体的API
-                .termsOfServiceUrl("http://127.0.0.1:8080.com") // 用于定义服务的域名
+                .title("reggie_front--api文档") //  可以用来自定义API的主标题
+                .description("用户端接口") // 可以用来描述整体的API
+                .termsOfServiceUrl("http://116.198.43.90") // 用于定义服务的域名
                 .contact(new Contact("nanGuoMM","https://nanGuoMM.com","zhuyuqinss@gmail.com"))
                 .version("1.0") // 可以用来定义版本。
                 .build(); //

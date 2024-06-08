@@ -91,11 +91,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         orders.setId(orderId);
         orders.setOrderTime(LocalDateTime.now());
         orders.setCheckoutTime(LocalDateTime.now());
-        orders.setStatus(1);//设为未付款
+        orders.setStatus(2);//设为派送中
         orders.setAmount(new BigDecimal(amount.get()));//总金额
         orders.setUserId(userId);
         orders.setNumber(String.valueOf(orderId));
-        orders.setUserName(user.getName());
+        orders.setUserName(user.getMail());//暂时将用户名设为邮箱
         orders.setConsignee(addressBook.getConsignee());
         orders.setPhone(addressBook.getPhone());
         orders.setAddress((addressBook.getProvinceName() == null ? "" : addressBook.getProvinceName())
@@ -115,7 +115,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, Long userId) {
         //分页查询order表
         LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Orders::getUserId,userId);
+        queryWrapper.eq(Orders::getUserId,userId).orderByDesc(Orders::getOrderTime);
         Page<Orders> ordersIPage = new Page<>(page,pageSize);
         super.page(ordersIPage,queryWrapper);
         //查询orderDetail表，并封装List<OrdersDTO>
