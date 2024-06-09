@@ -20,6 +20,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,13 +43,13 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     private IAddressBookService addressBookService;
 
     @Autowired
-    private IShoppingCartService shoppingCartService;
-
-    @Autowired
     private IUserService userService;
 
     @Autowired
     private IOrderDetailService orderDetailService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @CacheEvict(cacheNames = "orderCache",allEntries = true)
     @Override
@@ -59,9 +61,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
             throw new CustomException("地址信息错误");
         }
         //查询当前用户购物车信息
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,userId);
-        List<ShoppingCart> shoppingCarts = shoppingCartService.list(queryWrapper);
+        HttpSession session = request.getSession();
+        List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
         if (shoppingCarts == null || shoppingCarts.isEmpty()) {
             throw new CustomException("购物车中无数据");
         }
@@ -107,7 +108,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         //向订单明细表插入数据，多条数据
         orderDetailService.saveBatch(orderDetails);
         //清空购物车
-        shoppingCartService.remove(queryWrapper);
+        session.setAttribute("shoppingCart", null);
     }
 
     @Cacheable(cacheNames = "orderCache",key = "'page_1_size_10' + '_' +#userId")
