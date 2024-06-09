@@ -48,6 +48,9 @@ public class DishDTO {
     @ApiModelProperty("口味")
     private final List<DishFlavorDTO> flavors = new ArrayList<>();
 
+    @ApiModelProperty("份数")
+    private Integer copies;
+
     @ApiModelProperty("菜品分类名")
     private String categoryName;
 }

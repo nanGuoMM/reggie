@@ -48,11 +48,14 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         LambdaQueryWrapper<SetmealDishPO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SetmealDishPO::getSetmealId,ids);
         List<SetmealDishPO> setmealDishList = setmealDishService.list(queryWrapper);
+
         return setmealDishList.stream().map((item) -> {
             Long dishId = Long.parseLong(item.getDishId());
             DishDTO dishDto = new DishDTO();
             DishPO byId = dishService.getById(dishId);
             BeanUtils.copyProperties(byId,dishDto);
+            //手动设置份数
+            dishDto.setCopies(item.getCopies());
             LambdaQueryWrapper<DishFlavorPO> flavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
             flavorLambdaQueryWrapper.eq(DishFlavorPO::getDishId,dishId);
             List<DishFlavorPO> list = dishFlavorService.list(flavorLambdaQueryWrapper);
