@@ -256,6 +256,9 @@ CREATE TABLE `order_detail`  (
 INSERT INTO `order_detail` VALUES (1799329789908090881, '米饭', 'ee04a05a-1230-46b6-8ad5-1a95b140fff3.png', 1799329789522214913, 1413385247889891330, NULL, NULL, 1, 2.00);
 INSERT INTO `order_detail` VALUES (1799329789908090882, '北冰洋', 'c99e0aab-3cb7-4eaa-80fd-f47d4ffea694.png', 1799329789522214913, 1413342036832100354, NULL, '冷藏', 1, 5.00);
 INSERT INTO `order_detail` VALUES (1799329789908090883, '商务豪华套餐', 'a626389c-d25e-4d71-bb5c-67b3e2276b50.jpg', 1799329789522214913, NULL, 1799322796719906817, NULL, 1, 600.00);
+INSERT INTO `order_detail` VALUES (1799714714784104450, '毛氏红烧肉', '0a3b3288-3446-4420-bbff-f263d0c02d8e.jpg', 1799714714402422786, 1397850140982161409, NULL, '不要香菜,重辣', 1, 68.00);
+INSERT INTO `order_detail` VALUES (1799714714784104451, '霸王别姬', '057dd338-e487-4bbc-a74c-0384c44a9ca3.jpg', 1799714714402422786, 1397850851245600769, NULL, '不要香菜,中辣', 2, 128.00);
+INSERT INTO `order_detail` VALUES (1799714714842824706, '全家福', 'a53a4e6a-3b83-4044-87f9-9d49b30a8fdc.jpg', 1799714714402422786, 1397851099502260226, NULL, '不要香菜,中辣', 2, 118.00);
 
 -- ----------------------------
 -- Table structure for orders
@@ -283,6 +286,7 @@ CREATE TABLE `orders`  (
 -- Records of orders
 -- ----------------------------
 INSERT INTO `orders` VALUES (1799329789522214913, '1799329789522214913', 2, 1796518786329755649, 1796519275020697602, '2024-06-08 14:37:06', '2024-06-08 14:37:06', 1, 607.00, '', '17760445848', '乐山师范学院', 'zhuyuqinss@gmail.com', '朱宇勤');
+INSERT INTO `orders` VALUES (1799714714402422786, '1799714714402422786', 2, 1796518786329755649, 1796519275020697602, '2024-06-09 16:06:40', '2024-06-09 16:06:40', 1, 560.00, '', '17760445848', '乐山师范学院', 'zhuyuqinss@gmail.com', '朱宇勤');
 
 -- ----------------------------
 -- Table structure for setmeal
@@ -341,29 +345,6 @@ INSERT INTO `setmeal_dish` VALUES (1415580119069671426, '1415580119015145474', '
 INSERT INTO `setmeal_dish` VALUES (1799322797047062529, '1799322796719906817', '1397849739276890114', '辣子鸡', 7800.00, 1, 0, '2024-06-08 14:09:19', '2024-06-08 14:09:19', 1, 1, 0);
 INSERT INTO `setmeal_dish` VALUES (1799322797114171394, '1799322796719906817', '1397860578738352129', '白切鸡', 6600.00, 1, 0, '2024-06-08 14:09:19', '2024-06-08 14:09:19', 1, 1, 0);
 INSERT INTO `setmeal_dish` VALUES (1799322797114171395, '1799322796719906817', '1397861683434139649', '清蒸河鲜海鲜', 38800.00, 1, 0, '2024-06-08 14:09:19', '2024-06-08 14:09:19', 1, 1, 0);
-
--- ----------------------------
--- Table structure for shopping_cart
--- ----------------------------
-DROP TABLE IF EXISTS `shopping_cart`;
-CREATE TABLE `shopping_cart`  (
-  `id` bigint NOT NULL COMMENT '主键',
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '名称',
-  `image` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '图片',
-  `user_id` bigint NOT NULL COMMENT '主键',
-  `dish_id` bigint NULL DEFAULT NULL COMMENT '菜品id',
-  `setmeal_id` bigint NULL DEFAULT NULL COMMENT '套餐id',
-  `dish_flavor` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '口味',
-  `number` int NOT NULL DEFAULT 1 COMMENT '数量',
-  `amount` decimal(10, 2) NOT NULL COMMENT '金额',
-  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '购物车' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of shopping_cart
--- ----------------------------
-INSERT INTO `shopping_cart` VALUES (1798553327132704770, '辣子鸡', 'f966a38e-0780-40be-bb52-5699d13cb3d9.jpg', 1798544824896815106, 1397849739276890114, NULL, '不要香菜,重辣', 1, 78.00, '2024-06-06 11:11:43');
 
 -- ----------------------------
 -- Table structure for user
