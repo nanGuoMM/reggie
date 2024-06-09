@@ -1,10 +1,8 @@
 package com.nanGuoMM.reggie.backend.controller;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nanGuoMM.reggie.backend.domain.Result;
 import com.nanGuoMM.reggie.backend.domain.setmeal.DTO.SetmealDTO;
-import com.nanGuoMM.reggie.backend.domain.setmeal.PO.SetmealPO;
 import com.nanGuoMM.reggie.backend.service.ISetmealService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -67,6 +65,7 @@ public class SetmealController {
     @ApiOperation(value = "删除",notes = "删除套餐")
     @DeleteMapping
     public Result<Object> deleteSetmeal(@RequestParam List<Long> ids) {
+
         //调用service
         setmealService.deleteSetmeal(ids);
         return Result.success();

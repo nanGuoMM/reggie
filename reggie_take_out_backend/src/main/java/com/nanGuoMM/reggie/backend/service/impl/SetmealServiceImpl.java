@@ -97,11 +97,12 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         //封装dto
         SetmealDTO setmealDTO = new SetmealDTO();
         BeanUtils.copyProperties(setmealPO,setmealDTO);
-        setmealDishPOS.forEach(setmealDishPO -> {
+        List<SetmealDishDTO> setmealDishDTOS = setmealDishPOS.stream().map(setmealDishPO -> {
             SetmealDishDTO setmealDishDTO = new SetmealDishDTO();
-            BeanUtils.copyProperties(setmealDishPO,setmealDishDTO);
-            setmealDTO.getSetmealDishes().add(setmealDishDTO);
-        });
+            BeanUtils.copyProperties(setmealDishPO, setmealDishDTO);
+            return setmealDishDTO;
+        }).collect(Collectors.toList());
+        setmealDTO.setSetmealDishes(setmealDishDTOS);
         return setmealDTO;
     }
 
@@ -114,11 +115,13 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         super.updateById(setmealPO);
 
         //更新菜品和套餐关系表
-        setmealDTO.getSetmealDishes().forEach(setmealDishDTO -> {
+        for (SetmealDishDTO setmealDishDTO : setmealDTO.getSetmealDishes()) {
             SetmealDishPO setmealDishPO = new SetmealDishPO();
             BeanUtils.copyProperties(setmealDishDTO,setmealDishPO);
-            setmealDishService.updateById(setmealDishPO);
-        });
+            LambdaQueryWrapper<SetmealDishPO> setmealDishPOLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            setmealDishPOLambdaQueryWrapper.eq(SetmealDishPO::getDishId,setmealDishPO.getDishId());
+            setmealDishService.update(setmealDishPO,setmealDishPOLambdaQueryWrapper);
+        }
     }
 
     @CacheEvict(cacheNames = "setmealCache",allEntries = true)

@@ -55,5 +55,5 @@ public class SetmealDTO {
     private String categoryName;
 
     @ApiModelProperty("菜品列表")
-    private final List<SetmealDishDTO> setmealDishes = new ArrayList<>();
+    private List<SetmealDishDTO> setmealDishes;
 }
