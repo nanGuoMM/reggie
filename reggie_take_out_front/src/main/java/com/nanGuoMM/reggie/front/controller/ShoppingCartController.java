@@ -1,18 +1,16 @@
 package com.nanGuoMM.reggie.front.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.nanGuoMM.reggie.front.domain.Result;
 import com.nanGuoMM.reggie.front.domain.shopping_cart.ShoppingCart;
-import com.nanGuoMM.reggie.front.service.IShoppingCartService;
-import com.nanGuoMM.reggie.front.utils.BaseContext;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -26,86 +24,117 @@ import java.util.Map;
 @RequestMapping("/shoppingCart")
 public class ShoppingCartController {
 
-    @Autowired
-    private IShoppingCartService shoppingCartService;
-
     @ApiOperation("查询")
     @GetMapping("/list")
-    public Result<List<ShoppingCart>> listShopCart() {
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<ShoppingCart>()
-                .eq(ShoppingCart::getUserId,BaseContext.getCurrentId()).orderByDesc(ShoppingCart::getCreateTime);
-        List<ShoppingCart> shoppingCarts = shoppingCartService.list(queryWrapper);
+    public Result<List<ShoppingCart>> listShopCart(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
+        if (shoppingCarts == null) {
+            shoppingCarts = new ArrayList<>();
+        }
         return Result.success(shoppingCarts);
     }
 
     @ApiOperation("添加")
     @PostMapping("/add")
-    public Result<Object> addShopCart(@RequestBody ShoppingCart shoppingCart){
-        //设置用户id
-        shoppingCart.setUserId(BaseContext.getCurrentId());
-        //构建查询条件
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,shoppingCart.getUserId());
+    public Result<ShoppingCart> addShopCart(HttpServletRequest request, @RequestBody ShoppingCart shoppingCart) {
+        HttpSession session = request.getSession();
+        List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
 
-        //判断添加到购物车的是套餐还是菜品
-        if(shoppingCart.getSetmealId() != null) {
-            //套餐
-            queryWrapper.eq(ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
-        } else {
-            //菜品
-            queryWrapper.eq(ShoppingCart::getDishId,shoppingCart.getDishId());
+        // 如果购物车为空，初始化购物车
+        if (shoppingCarts == null) {
+            shoppingCarts = new ArrayList<>();
         }
-        //查询当前菜品或套餐是否已经在购物车
-        ShoppingCart cartServiceOne = shoppingCartService.getOne(queryWrapper);
-        if(cartServiceOne == null) {
-            //第一次添加，数量设为1
+
+        // 判断是套餐还是菜品，并更新购物车
+        boolean isSetmeal = shoppingCart.getSetmealId() != null;
+        boolean itemUpdated = updateCartItem(shoppingCarts, shoppingCart, isSetmeal);
+
+        if (!itemUpdated) {
+            // 新增购物车项
             shoppingCart.setNumber(1);
-            shoppingCart.setCreateTime(LocalDateTime.now());
-            shoppingCartService.save(shoppingCart);
-            cartServiceOne = shoppingCart;
-        } else {
-            //直接+1
-            Integer number = cartServiceOne.getNumber();
-            cartServiceOne.setNumber(number + 1);
-            shoppingCartService.updateById(cartServiceOne);
+            shoppingCarts.add(shoppingCart);
+            session.setAttribute("shoppingCart", shoppingCarts);
+            return Result.success(shoppingCart);
         }
-        return Result.success(cartServiceOne);
+
+        session.setAttribute("shoppingCart", shoppingCarts);
+        return Result.success(shoppingCart);
     }
 
-    @ApiOperation("清空")
+    @ApiOperation("清空购物车")
     @DeleteMapping("/clean")
-    public Result<Object> cleanCart() {
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
-        shoppingCartService.remove(queryWrapper);
+    public Result<String> clearShopCart(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.setAttribute("shoppingCart", null);
         return Result.success();
     }
 
+
     @ApiOperation("减少")
     @PostMapping("/sub")
-    public Result<ShoppingCart> subCart(@RequestBody Map<String,Long> id) {
-        //查询
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
-        //判断
-        if (id.get("dishId") != null) {
-            //菜品
-            queryWrapper.eq(ShoppingCart::getDishId,id.get("dishId"));
-        } else {
-            //套餐
-            queryWrapper.eq(ShoppingCart::getSetmealId,id.get("setmealId"));
+    public Result<ShoppingCart> reduceShopCart(HttpServletRequest request, @RequestBody ShoppingCart shoppingCart) {
+        HttpSession session = request.getSession();
+        List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
+
+        // 如果购物车为空，返回错误信息
+        if (shoppingCarts == null) {
+            return Result.error("购物车为空");
         }
-        ShoppingCart shoppingCartServiceOne = shoppingCartService.getOne(queryWrapper);
-        //修改
-        Integer number = shoppingCartServiceOne.getNumber();
-        shoppingCartServiceOne.setNumber(number - 1);
-        if(shoppingCartServiceOne.getNumber() != 0) {
-            //更新
-            shoppingCartService.updateById(shoppingCartServiceOne);
-            return Result.success(shoppingCartServiceOne);
+
+        // 判断是套餐还是菜品，并更新购物车
+        boolean isSetmeal = shoppingCart.getSetmealId() != null;
+        boolean itemUpdated = reduceCartItem(shoppingCarts, shoppingCart, isSetmeal);
+
+        if (!itemUpdated) {
+            return Result.error("购物车中没有该项");
         }
-        //删除
-        shoppingCartService.removeById(shoppingCartServiceOne);
-        return Result.success(shoppingCartServiceOne);
+
+        session.setAttribute("shoppingCart", shoppingCarts);
+        return Result.success(shoppingCart);
+    }
+
+
+    private boolean updateCartItem(List<ShoppingCart> shoppingCarts, ShoppingCart shoppingCart, boolean isSetmeal) {
+        for (ShoppingCart temp : shoppingCarts) {
+            if (isSetmeal && temp.getSetmealId() != null && temp.getSetmealId().equals(shoppingCart.getSetmealId())) {
+                int number = temp.getNumber() + 1;
+                shoppingCart.setNumber(number);
+                temp.setNumber(number);
+                return true;
+            } else if (!isSetmeal && temp.getDishId() != null && temp.getDishId().equals(shoppingCart.getDishId())) {
+                int number = temp.getNumber() + 1;
+                shoppingCart.setNumber(number);
+                temp.setNumber(number);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean reduceCartItem(List<ShoppingCart> shoppingCarts, ShoppingCart shoppingCart, boolean isSetmeal) {
+        for (Iterator<ShoppingCart> iterator = shoppingCarts.iterator(); iterator.hasNext(); ) {
+            ShoppingCart temp = iterator.next();
+            if (isSetmeal && temp.getSetmealId() != null && temp.getSetmealId().equals(shoppingCart.getSetmealId())) {
+                int newNumber = temp.getNumber() - 1;
+                if (newNumber > 0) {
+                    temp.setNumber(newNumber);
+                    shoppingCart.setNumber(newNumber);
+                } else {
+                    iterator.remove();
+                }
+                return true;
+            } else if (!isSetmeal && temp.getDishId() != null && temp.getDishId().equals(shoppingCart.getDishId())) {
+                int newNumber = temp.getNumber() - 1;
+                if (newNumber > 0) {
+                    shoppingCart.setNumber(newNumber);
+                    temp.setNumber(newNumber);
+                } else {
+                    iterator.remove();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }
