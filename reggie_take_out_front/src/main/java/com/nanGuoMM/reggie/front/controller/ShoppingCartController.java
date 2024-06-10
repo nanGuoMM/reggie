@@ -2,6 +2,7 @@ package com.nanGuoMM.reggie.front.controller;
 
 import com.nanGuoMM.reggie.front.domain.Result;
 import com.nanGuoMM.reggie.front.domain.shopping_cart.ShoppingCart;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/shoppingCart")
+@Api(tags = "购物车")
 public class ShoppingCartController {
 
     @ApiOperation("查询")
