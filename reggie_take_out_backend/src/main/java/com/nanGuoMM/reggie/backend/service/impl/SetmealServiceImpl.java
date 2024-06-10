@@ -41,7 +41,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
     @Autowired
     private ISetmealDishService setmealDishService;
 
-    @Cacheable(cacheNames = "setmealCache",key = "'page_1_size_10'")
+    @Cacheable(cacheNames = "setmealCache",key = "'page:' + #page  + '_pageSize:' + #pageSize + '_name:' + #name")
     @Override
     public IPage<SetmealDTO> pageSetmeal(int page, int pageSize, String name) {
         //分页查询

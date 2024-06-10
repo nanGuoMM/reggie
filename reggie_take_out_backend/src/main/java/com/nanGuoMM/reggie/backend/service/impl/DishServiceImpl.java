@@ -41,7 +41,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, DishPO> implements 
     @Autowired
     private ICategoryService categoryService;
 
-    @Cacheable(cacheNames = "dishCache",key = "'page_1_size_10'")
+    @Cacheable(cacheNames = "dishCache",key = "'page:' + #page  + '_pageSize:' + #pageSize + '_name:' + #name")
     @Override
     public IPage<DishDTO> pageDish(String page, String pageSize,String name) {
         //查询

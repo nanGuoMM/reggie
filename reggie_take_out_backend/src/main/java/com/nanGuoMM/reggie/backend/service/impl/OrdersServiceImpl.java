@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements IOrdersService {
     @Autowired
     private IOrderDetailService orderDetailService;
-    @Cacheable(cacheNames = "orderCache", key = "'page_1_size_10' + '_all'")
+    @Cacheable(cacheNames = "orderCache",key = "'page:' + #page  + '_pageSize:' + #pageSize + '_beginTime:' + #beginTime + '_endTime:' + #endTime + '_number:' + #number")
     @Override
     public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, LocalDateTime beginTime, LocalDateTime endTime, Long number) {
         Page<Orders> ordersIPage = new Page<>(page,pageSize);

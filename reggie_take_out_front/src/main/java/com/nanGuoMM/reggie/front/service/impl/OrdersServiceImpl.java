@@ -111,7 +111,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         session.setAttribute("shoppingCart", null);
     }
 
-    @Cacheable(cacheNames = "orderCache",key = "'page_1_size_10' + '_' +#userId")
+    @Cacheable(cacheNames = "orderCache", key = "#page + '-' + #pageSize + '-' + #userId")
     @Override
     public IPage<OrdersDTO> pageOrder(Integer page, Integer pageSize, Long userId) {
         //分页查询order表

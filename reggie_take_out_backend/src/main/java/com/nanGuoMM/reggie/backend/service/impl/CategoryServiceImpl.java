@@ -39,7 +39,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, CategoryPO>
     @Autowired
     private ISetmealService setmealService;
 
-    @Cacheable(cacheNames = "categoryCache",key = "'page_1_size_10'")
+    @Cacheable(cacheNames = "categoryCache",key = "'page:' + #page + '_' + 'pageSize:' + #pageSize")
     @Override
     public IPage<CategoryDTO> pageCategory(Integer page, Integer pageSize) {
         //查询数据

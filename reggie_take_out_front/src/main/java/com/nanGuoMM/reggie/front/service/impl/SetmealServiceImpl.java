@@ -68,7 +68,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, SetmealPO> im
         }).collect(Collectors.toList());
     }
 
-    @Cacheable(cacheNames = "setmealCache",key = "#setmealDTO.categoryId + '_' + #setmealDTO.status")
+    @Cacheable(cacheNames = "setmealCache",key = "'listSetmeal:' + #setmealDTO.categoryId + '_' + #setmealDTO.status")
     @Override
     public List<SetmealDTO> listSetmeal(SetmealDTO setmealDTO) {
         //查询
