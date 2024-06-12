@@ -4,6 +4,7 @@ import com.nanGuoMM.reggie.front.domain.Result;
 import com.nanGuoMM.reggie.front.domain.shopping_cart.ShoppingCart;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,8 @@ public class ShoppingCartController {
 
     @ApiOperation("添加")
     @PostMapping("/add")
-    public Result<ShoppingCart> addShopCart(HttpServletRequest request, @RequestBody ShoppingCart shoppingCart) {
+    public Result<ShoppingCart> addShopCart(HttpServletRequest request,
+                                            @ApiParam("新菜品") @RequestBody ShoppingCart shoppingCart) {
         HttpSession session = request.getSession();
         List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
 
@@ -75,7 +77,7 @@ public class ShoppingCartController {
 
     @ApiOperation("减少")
     @PostMapping("/sub")
-    public Result<ShoppingCart> reduceShopCart(HttpServletRequest request, @RequestBody ShoppingCart shoppingCart) {
+    public Result<ShoppingCart> reduceShopCart(HttpServletRequest request,@ApiParam("菜品对象") @RequestBody ShoppingCart shoppingCart) {
         HttpSession session = request.getSession();
         List<ShoppingCart> shoppingCarts = (List<ShoppingCart>) session.getAttribute("shoppingCart");
 
@@ -97,7 +99,7 @@ public class ShoppingCartController {
     }
 
 
-    private boolean updateCartItem(List<ShoppingCart> shoppingCarts, ShoppingCart shoppingCart, boolean isSetmeal) {
+    private boolean updateCartItem( List<ShoppingCart> shoppingCarts, ShoppingCart shoppingCart, boolean isSetmeal) {
         for (ShoppingCart temp : shoppingCarts) {
             if (isSetmeal && temp.getSetmealId() != null && temp.getSetmealId().equals(shoppingCart.getSetmealId())) {
                 int number = temp.getNumber() + 1;

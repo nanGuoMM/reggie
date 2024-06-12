@@ -9,6 +9,7 @@ import com.nanGuoMM.reggie.backend.domain.dish.PO.DishPO;
 import com.nanGuoMM.reggie.backend.service.IDishService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class DishController {
 
     @ApiOperation(value = "查询",notes = "分页查询")
     @GetMapping("/page")
-    public Result<IPage<DishDTO>> pageDish(@RequestParam Map<String,String> params) {
+    public Result<IPage<DishDTO>> pageDish(@ApiParam("分页参数") @RequestParam Map<String,String> params) {
         //调用service
         IPage<DishDTO> dishDTOIPage = dishService.pageDish(params.get("page"), params.get("pageSize"),params.get("name"));
         return Result.success(dishDTOIPage);
@@ -43,7 +44,7 @@ public class DishController {
 
     @ApiOperation(value = "添加",notes = "添加菜品")
     @PostMapping
-    public Result<Object> saveDish(@RequestBody DishDTO dishDto) {
+    public Result<Object> saveDish(@ApiParam("新菜品") @RequestBody DishDTO dishDto) {
         //调用service
         dishService.saveDish(dishDto);
         return Result.success();
@@ -51,14 +52,14 @@ public class DishController {
 
     @ApiOperation(value = "显示",notes = "按id查询数据回显")
     @GetMapping("/{id}")
-    public Result<DishDTO> getById(@PathVariable Long id) {
+    public Result<DishDTO> getById(@ApiParam("菜品id") @PathVariable Long id) {
         DishDTO dishDTO = dishService.getDishById(id);
         return Result.success(dishDTO);
     }
 
     @ApiOperation(value = "修改",notes = "保存修改结果")
     @PutMapping
-    public Result<Object> updateDish(@RequestBody DishDTO dishDTO) {
+    public Result<Object> updateDish(@ApiParam("新菜品") @RequestBody DishDTO dishDTO) {
 
         dishService.updateDish(dishDTO);
         return Result.success();
@@ -66,7 +67,7 @@ public class DishController {
 
     @ApiOperation(value = "删除",notes = "删除菜品")
     @DeleteMapping
-    public Result<Object> deleteDish(@RequestParam List<Long> ids) {
+    public Result<Object> deleteDish(@ApiParam("菜品ids") @RequestParam List<Long> ids) {
         //调用service
         dishService.deleteDish(ids);
         return Result.success();
@@ -74,14 +75,15 @@ public class DishController {
 
     @ApiOperation(value = "状态",notes = "停售起售")
     @PostMapping("/status/{status}")
-    public Result<Object> updateStatus(@PathVariable Integer status,@RequestParam List<Long> ids) {
+    public Result<Object> updateStatus(@ApiParam("状态") @PathVariable Integer status,
+                                       @ApiParam("菜品ids") @RequestParam List<Long> ids) {
         dishService.updateStatus(status,ids);
         return Result.success();
     }
 
     @ApiOperation(value = "查询",notes = "下拉列表")
     @GetMapping("/list")
-    public Result<List<DishDTO>> listDish(@RequestParam Long categoryId) {
+    public Result<List<DishDTO>> listDish(@ApiParam("分类id") @RequestParam Long categoryId) {
         //查询
         LambdaQueryWrapper<DishPO> queryWrapper = new LambdaQueryWrapper<DishPO>()
                 .eq(DishPO::getCategoryId,categoryId);

@@ -6,6 +6,7 @@ import com.nanGuoMM.reggie.backend.domain.setmeal.DTO.SetmealDTO;
 import com.nanGuoMM.reggie.backend.service.ISetmealService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class SetmealController {
 
     @ApiOperation(value = "显示",notes = "分页查询")
     @GetMapping("/page")
-    public Result<IPage<SetmealDTO>> pageSetmeal(@RequestParam Map<String,String> params) {
+    public Result<IPage<SetmealDTO>> pageSetmeal(@ApiParam("分页查询参数") @RequestParam Map<String,String> params) {
         //调用service
         IPage<SetmealDTO> setmealDTOIPage = setmealService.pageSetmeal(Integer.parseInt(params.get("page"))
                 , Integer.parseInt(params.get("pageSize")), params.get("name"));
@@ -39,7 +40,7 @@ public class SetmealController {
 
     @ApiOperation(value = "添加",notes = "添加菜品")
     @PostMapping
-    public Result<Object> saveSetmeal(@RequestBody SetmealDTO setmealDTO) {
+    public Result<Object> saveSetmeal(@ApiParam("新套餐") @RequestBody SetmealDTO setmealDTO) {
 
         //调用service
         setmealService.saveSetmeal(setmealDTO);
@@ -48,7 +49,7 @@ public class SetmealController {
 
     @ApiOperation(value = "查询",notes = "回显查询")
     @GetMapping("/{id}")
-    public Result<SetmealDTO> getSetmealById(@PathVariable Long id) {
+    public Result<SetmealDTO> getSetmealById(@ApiParam("套餐id") @PathVariable Long id) {
         //调用service
         SetmealDTO setmealById = setmealService.getSetmealById(id);
         return Result.success(setmealById);
@@ -56,7 +57,7 @@ public class SetmealController {
 
     @ApiOperation(value = "修改",notes = "保存修改的数据")
     @PutMapping
-    public Result<Object> updateSetmeal(@RequestBody SetmealDTO setmealDTO) {
+    public Result<Object> updateSetmeal(@ApiParam("新套餐") @RequestBody SetmealDTO setmealDTO) {
         //调用service
         setmealService.updateSetmeal(setmealDTO);
         return Result.success();
@@ -64,7 +65,7 @@ public class SetmealController {
 
     @ApiOperation(value = "删除",notes = "删除套餐")
     @DeleteMapping
-    public Result<Object> deleteSetmeal(@RequestParam List<Long> ids) {
+    public Result<Object> deleteSetmeal(@ApiParam("套餐ids") @RequestParam List<Long> ids) {
 
         //调用service
         setmealService.deleteSetmeal(ids);
@@ -73,7 +74,8 @@ public class SetmealController {
 
     @ApiOperation(value = "状态",notes = "启售禁售")
     @PostMapping("/status/{status}")
-    public Result<Object> updateStatus(@PathVariable Integer status,@RequestParam List<Long> ids) {
+    public Result<Object> updateStatus(@ApiParam("状态码") @PathVariable Integer status,
+                                       @ApiParam("套餐ids") @RequestParam List<Long> ids) {
         setmealService.updateStatus(status,ids);
         return Result.success();
     }

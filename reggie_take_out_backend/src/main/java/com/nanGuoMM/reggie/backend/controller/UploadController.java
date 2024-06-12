@@ -4,11 +4,9 @@ import com.nanGuoMM.reggie.backend.domain.Result;
 import com.nanGuoMM.reggie.backend.exception.CustomException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -26,7 +24,7 @@ public class UploadController {
 
     @ApiOperation(value = "上传", notes = "图片上传")
     @PostMapping("/upload")
-    public Result<String> upload(MultipartFile file) throws IOException {
+    public Result<String> upload(@ApiParam("照片") MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         assert originalFilename != null;
         String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -45,7 +43,7 @@ public class UploadController {
 
     @ApiOperation(value = "下载",notes = "回显和显示图片")
     @GetMapping("/download")
-    public void download(HttpServletResponse response,String name) throws FileNotFoundException {
+    public void download(HttpServletResponse response,@ApiParam("照片全名") String name) throws FileNotFoundException {
 
         //检查照片是否存在
         if (!new File(basePath + name).exists()) {

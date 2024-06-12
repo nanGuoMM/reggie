@@ -11,6 +11,7 @@ import com.nanGuoMM.reggie.front.service.IDishFlavorService;
 import com.nanGuoMM.reggie.front.service.IDishService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class DishController {
 
     @ApiOperation(value = "查询",notes = "下拉列表")
     @GetMapping("/list")
-    public Result<List<DishDTO>> listDish(Long categoryId,Integer status) {
+    public Result<List<DishDTO>> listDish(@ApiParam("分类id") Long categoryId,@ApiParam("状态") Integer status) {
         List<DishDTO> dishDTOS = dishService.listDish(categoryId, status);
         return Result.success(dishDTOS);
     }

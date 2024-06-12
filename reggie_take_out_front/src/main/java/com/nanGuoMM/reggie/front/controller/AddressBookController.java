@@ -9,6 +9,7 @@ import com.nanGuoMM.reggie.front.service.IAddressBookService;
 import com.nanGuoMM.reggie.front.utils.BaseContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class AddressBookController {
 
     @ApiOperation("保存")
     @PostMapping
-    public Result<Object> saveAddress(@RequestBody AddressBookDTO addressBookDTO) {
+    public Result<Object> saveAddress(@ApiParam("新地址") @RequestBody AddressBookDTO addressBookDTO) {
         //转换
         AddressBookPO addressBookPO = new AddressBookPO();
         BeanUtils.copyProperties(addressBookDTO,addressBookPO);
@@ -68,7 +69,7 @@ public class AddressBookController {
 
     @ApiOperation("回显")
     @GetMapping("/{id}")
-    public Result<AddressBookDTO> getAddressById(@PathVariable Long id) {
+    public Result<AddressBookDTO> getAddressById(@ApiParam("地址id") @PathVariable Long id) {
         //查询
         AddressBookPO addressBookPO = addressBookService.getById(id);
         //封装dto
@@ -79,7 +80,7 @@ public class AddressBookController {
 
     @ApiOperation("修改")
     @PutMapping
-    public Result<Object> updateAddress(@RequestBody AddressBookDTO addressBookDTO) {
+    public Result<Object> updateAddress(@ApiParam("新地址") @RequestBody AddressBookDTO addressBookDTO) {
         //封装PO
         AddressBookPO addressBookPO = new AddressBookPO();
         BeanUtils.copyProperties(addressBookDTO,addressBookPO);
@@ -90,7 +91,7 @@ public class AddressBookController {
 
     @ApiOperation("删除")
     @DeleteMapping
-    public Result<Object> deleteAddress(@RequestParam Long ids) {
+    public Result<Object> deleteAddress(@ApiParam("地址id") @RequestParam Long ids) {
         //调用service
         addressBookService.removeById(ids);
 
@@ -99,7 +100,7 @@ public class AddressBookController {
 
     @ApiOperation("默认Put")
     @PutMapping("/default")
-    public Result<Object> defaultAddress(@RequestBody Long id) {
+    public Result<Object> defaultAddress(@ApiParam("地址id") @RequestBody Long id) {
         //构建修改条件
         LambdaUpdateWrapper<AddressBookPO> updateWrapper = new LambdaUpdateWrapper<>();
         //设为默认地址

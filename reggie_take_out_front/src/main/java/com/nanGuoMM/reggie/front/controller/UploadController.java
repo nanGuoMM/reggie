@@ -4,6 +4,7 @@ import com.nanGuoMM.reggie.front.domain.Result;
 import com.nanGuoMM.reggie.front.exception.CustomException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,28 +28,9 @@ public class UploadController {
     @Value("${basePath}")
     private String basePath;
 
-    @ApiOperation(value = "上传", notes = "图片上传")
-    @PostMapping("/upload")
-    public Result<String> upload(MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename();
-        assert originalFilename != null;
-        String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
-
-        String fileName = UUID.randomUUID() + substring;
-        File fileTemp = new File(basePath);
-        if(!fileTemp.exists()) {
-            if(!fileTemp.mkdir()) {
-                throw new CustomException("上传文件时，创建新目录失败");
-            }
-        }
-        file.transferTo(new File(basePath + fileName));
-
-        return Result.success(fileName);
-    }
-
     @ApiOperation(value = "下载",notes = "回显和显示图片")
     @GetMapping("/download")
-    public void download(HttpServletResponse response,String name) throws FileNotFoundException {
+    public void download(HttpServletResponse response,@ApiParam("图片全名") String name) throws FileNotFoundException {
 
         //检查照片是否存在
         if (!new File(basePath + name).exists()) {

@@ -7,6 +7,7 @@ import com.nanGuoMM.reggie.front.domain.category.PO.CategoryPO;
 import com.nanGuoMM.reggie.front.service.ICategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class CategoryController {
 
     @ApiOperation(value = "查询",notes = "展示分类下拉列表")
     @GetMapping("/list")
-    public Result<List<CategoryDTO>> listCategory(Integer type) {
+    public Result<List<CategoryDTO>> listCategory(@ApiParam("类型") Integer type) {
         //查询
         LambdaQueryWrapper<CategoryPO> queryWrapper = new LambdaQueryWrapper<CategoryPO>()
                 .eq(type != null,CategoryPO::getType,type).orderByAsc(CategoryPO::getSort).orderByDesc(CategoryPO::getUpdateTime);

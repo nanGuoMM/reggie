@@ -10,6 +10,7 @@ import com.nanGuoMM.reggie.backend.domain.employee.VO.EmployeeLoginVO;
 import com.nanGuoMM.reggie.backend.service.IEmployeeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -37,7 +38,8 @@ public class EmployeeController {
 
     @ApiOperation(value = "登录",notes = "员工登录")
     @PostMapping("/login")
-    public Result<EmployeeLoginVO> login(HttpServletRequest request, @RequestBody EmployeeLoginFormDTO empDto) {
+    public Result<EmployeeLoginVO> login(HttpServletRequest request,
+                                         @ApiParam("登录表单") @RequestBody EmployeeLoginFormDTO empDto) {
 
         //查询
         LambdaQueryWrapper<EmployeePO> queryWrapper = new LambdaQueryWrapper<EmployeePO>()
@@ -66,7 +68,7 @@ public class EmployeeController {
 
     @ApiOperation(value = "添加",notes = "新增员工")
     @PostMapping
-    public Result<Object> add(@RequestBody EmployeeDTO employeeDto) {
+    public Result<Object> add(@ApiParam("新员工") @RequestBody EmployeeDTO employeeDto) {
         //封装po对象
         EmployeePO employee = new EmployeePO();
         BeanUtils.copyProperties(employeeDto,employee);
@@ -80,7 +82,7 @@ public class EmployeeController {
 
     @ApiOperation(value = "查询",notes = "分页查询")
     @GetMapping("/page")
-    public Result<IPage<EmployeeDTO>> page(@RequestParam Map<String,String> params) {
+    public Result<IPage<EmployeeDTO>> page(@ApiParam("分页查询参数") @RequestParam Map<String,String> params) {
         //调用service
         IPage<EmployeeDTO> employeePageVOIPage = employeeService
                 .pageEmployee(params.get("page"), params.get("pageSize"), params.get("name"));
@@ -89,7 +91,7 @@ public class EmployeeController {
 
     @ApiOperation(value = "状态",notes = "修改账号")
     @PutMapping
-    public Result<Object> update(HttpServletRequest req, @RequestBody EmployeeDTO updateDTO) {
+    public Result<Object> update(HttpServletRequest req, @ApiParam("新员工") @RequestBody EmployeeDTO updateDTO) {
 
         //封装PO数据
         EmployeePO employee = new EmployeePO();
@@ -102,7 +104,7 @@ public class EmployeeController {
 
     @ApiOperation(value = "id查询",notes = "根据id查询")
     @GetMapping("/{id}")
-    public Result<EmployeeDTO> getById(@PathVariable Long id) {
+    public Result<EmployeeDTO> getById(@ApiParam("员工id") @PathVariable Long id) {
         //调用service
         EmployeePO empPO = employeeService.getById(id);
 

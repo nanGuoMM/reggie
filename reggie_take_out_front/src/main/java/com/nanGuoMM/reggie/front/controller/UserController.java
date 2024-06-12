@@ -10,6 +10,7 @@ import com.nanGuoMM.reggie.front.service.IUserService;
 import com.nanGuoMM.reggie.front.utils.MailUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class UserController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public Result<UserVO> login(HttpServletRequest request, @RequestBody UserLoginDTO loginDTO) {
+    public Result<UserVO> login(HttpServletRequest request, @ApiParam("登录表单") @RequestBody UserLoginDTO loginDTO) {
         //查询
         LambdaQueryWrapper<UserPO> queryWrapper = new LambdaQueryWrapper<UserPO>()
                 .eq(UserPO::getMail,loginDTO.getMail());
@@ -68,7 +69,7 @@ public class UserController {
 
     @ApiOperation("发送验证码")
     @GetMapping("/code")
-    public Result<Object> code( @RequestParam String mail) {
+    public Result<Object> code(@ApiParam("邮箱") @RequestParam String mail) {
         //检查邮箱是否已注册
         LambdaQueryWrapper<UserPO> queryWrapper = new LambdaQueryWrapper<UserPO>()
                 .eq(UserPO::getMail,mail);
@@ -96,7 +97,7 @@ public class UserController {
 
     @ApiOperation("注册")
     @PostMapping("/register")
-    public Result<Object> register(HttpServletRequest request, @RequestBody UserRegisterDTO registerDTO) {
+    public Result<Object> register(HttpServletRequest request,@ApiParam("用户注册表单") @RequestBody UserRegisterDTO registerDTO) {
         //获取验证码
         String code = redisTemplate.opsForValue().get(registerDTO.getMail());
         if (code == null) {

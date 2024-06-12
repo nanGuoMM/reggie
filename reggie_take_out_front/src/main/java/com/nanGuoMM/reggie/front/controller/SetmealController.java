@@ -8,6 +8,7 @@ import com.nanGuoMM.reggie.front.domain.setmeal.PO.SetmealPO;
 import com.nanGuoMM.reggie.front.service.ISetmealService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class SetmealController {
 
     @ApiOperation("查询")
     @GetMapping("/list")
-    public Result<List<SetmealDTO>> listSetmeal(SetmealDTO setmealDTO) {
+    public Result<List<SetmealDTO>> listSetmeal(@ApiParam("查询对象") SetmealDTO setmealDTO) {
 
         List<SetmealDTO> setmealDTOS =setmealService.listSetmeal(setmealDTO);
 
@@ -41,7 +42,7 @@ public class SetmealController {
 
     @ApiOperation("展示")
     @GetMapping("/dish/{ids}")
-    public Result<List<DishDTO>> dish(@PathVariable Long ids){
+    public Result<List<DishDTO>> dish(@ApiParam("套餐id") @PathVariable Long ids){
         List<DishDTO> dishDTOList = setmealService.dish(ids);
         return Result.success(dishDTOList);
     }
